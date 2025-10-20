@@ -222,6 +222,28 @@ int distancemanagement(char vehicletype[][6],int vehicledetails[][4],char cities
         printdistable(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
     }
 }
+int printdistable(char vehicletype[][6],int vehicledetails[][4],char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES]){
+
+    printf("\n\n%4c",' ');
+        for(int i = 0;i<30;i++){
+                printf(" %.3s",uniquecodearr[i]);
+        }
+    printf("\n");
+    printf("%4c------------------------------------------------------------------------------------------------------------------------\n",' ');
+        for(int i = 0; i<MAX_CITIES;i++){
+                printf("%.3s|%c",uniquecodearr[i],' ');
+        for(int j = 0; j<MAX_CITIES;j++){
+            printf("%03d%c",numberarray[i][j],' ');
+        }
+        printf("\n");
+    }
+    printf("\n");
+    for(int i = 0;i<MAX_CITIES;i++){
+        printf("%.3s - %.*s",uniquecodearr[i],(int)strlen(citiesarr[i]),citiesarr[i]);
+    }
+    menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+
+}
 
 
 
