@@ -260,5 +260,74 @@ int  vehiclemanagement(char vehicletype[][6], int vehicledetails[][4]){
 
 }
 
+void deliveryorder(char vehicletype[][6],int vehicledetails[][4],char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES]){
+    char fromindex[4],toindex[4];
+    int weight,type,redirect;
+
+
+    vehiclemanagement(vehicletype,vehicledetails);
+    printf("Enter Source city unique code(Ex:-Col - Colombo) : ");
+     scanf("%s",fromindex);
+    for(int i =0;i<MAX_CITIES;i++){
+        if(strncmp(uniquecodearr[i],fromindex,3)==0){
+            printf("Enter Destination city unique code : ");
+            scanf("%s",toindex);
+            for(int j =0;j<MAX_CITIES;j++){
+                if(strncmp(uniquecodearr[j],toindex,3)==0){
+                    if(strncmp(toindex,fromindex,3)!=0){
+                        printf("Enter Weight : ");
+                        scanf("%d",&weight);
+                        if(weight<=1000){
+                           printf("Enter Vehicle Type(1=Van,2=Truck,3=Lorry) : ");
+                           scanf("%d",&type);
+                        }
+                        else if((weight>1000)&&(weight<=5000)){
+                            printf("Enter Vehicle Type(2=Truck,3=Lorry) : ");
+                            scanf("%d",&type);
+                        }
+                        else if((weight>5000)&&(weight<=10000)){
+                            type = 3;
+                        }
+                        else{
+                            printf("We do not have vehicles to transport the goods\n");
+                            menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+                        }
+
+        }
+            else{
+                printf("Source City and Destination City cannot be the same\n");
+                menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+        }
+        menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+        }
+
+        }
+         printf("Destinantion City Not Available in the list");
+         printf("Enter 1=View the list,2=Menu: ");
+         scanf("%d",&redirect);
+         if(redirect==1){
+            printdistable(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+            }
+        else if(redirect ==2){
+            menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+            }
+        menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+        }
+
+        }
+        printf("Source City Not Available in the list");
+        printf("Enter 1=View the list,2=Menu: ");
+        scanf("%d",&redirect);
+        if(redirect==1){
+            printdistable(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+        }
+        else if(redirect ==2){
+            menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+        }
+
+}
+
+
+
 
 
