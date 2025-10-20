@@ -18,6 +18,7 @@ int distancemanagement(char vehicletype[][6],int vehicledetails[][4],char cities
 int printdistable(char vehicletype[][6],int vehicledetails[][4], char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES]);
 int  vehiclemanagement(char vehicletype[][6], int vehicledetails[][4]);
 void deliveryorder(char vehicletype[][6],int vehicledetails[][4],char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES]);
+void calculations(int weight,int type,int distance,int vehicledetails[][4]);
 
 int main(){
 //FILE *file1 = fopen("cities.txt","r");
@@ -261,20 +262,22 @@ int  vehiclemanagement(char vehicletype[][6], int vehicledetails[][4]){
 }
 
 void deliveryorder(char vehicletype[][6],int vehicledetails[][4],char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES]){
-    char fromindex[4],toindex[4];
-    int weight,type,redirect;
+    char fromname[4],toname[4];
+    int weight,type,redirect,fromindex,toindex,distance;
 
 
     vehiclemanagement(vehicletype,vehicledetails);
     printf("Enter Source city unique code(Ex:-Col - Colombo) : ");
-     scanf("%s",fromindex);
+     scanf("%s",fromname);
     for(int i =0;i<MAX_CITIES;i++){
-        if(strncmp(uniquecodearr[i],fromindex,3)==0){
+        if(strncmp(uniquecodearr[i],fromname,3)==0){
+            fromindex = i;
             printf("Enter Destination city unique code : ");
-            scanf("%s",toindex);
+            scanf("%s",toname);
             for(int j =0;j<MAX_CITIES;j++){
-                if(strncmp(uniquecodearr[j],toindex,3)==0){
-                    if(strncmp(toindex,fromindex,3)!=0){
+                if(strncmp(uniquecodearr[j],toname,3)==0){
+                    if(strncmp(toname,fromname,3)!=0){
+                        toindex = j;
                         printf("Enter Weight : ");
                         scanf("%d",&weight);
                         if(weight<=1000){
@@ -289,43 +292,72 @@ void deliveryorder(char vehicletype[][6],int vehicledetails[][4],char citiesarr[
                             type = 3;
                         }
                         else{
-                            printf("We do not have vehicles to transport the goods\n");
+                            printf("\nWe do not have vehicles to transport the goods\n");
                             menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
                         }
 
         }
             else{
-                printf("Source City and Destination City cannot be the same\n");
+                printf("\nSource City and Destination City cannot be the same\n");
                 menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
         }
-        menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+        distance = numberarray[fromindex][toindex];
+        calculations(weight,type,distance,vehicledetails);
         }
 
         }
-         printf("Destinantion City Not Available in the list");
-         printf("Enter 1=View the list,2=Menu: ");
+         printf("\nDestinantion City Not Available in the list\n");
+         printf("Enter the choice(1=View the list,2=Menu): ");
          scanf("%d",&redirect);
          if(redirect==1){
-            printdistable(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+            printf("\n");
+            for(int i = 0;i<MAX_CITIES;i++){
+                printf("%.3s - %.*s",uniquecodearr[i],(int)strlen(citiesarr[i]),citiesarr[i]);
+                }
+                menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
             }
         else if(redirect ==2){
             menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
             }
-        menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+            menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
         }
 
         }
-        printf("Source City Not Available in the list");
-        printf("Enter 1=View the list,2=Menu: ");
+        printf("\nSource City Not Available in the list\n");
+        printf("Enter the choice(1=View the list,2=Menu): ");
         scanf("%d",&redirect);
         if(redirect==1){
-            printdistable(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
+            printf("\n");
+            for(int i = 0;i<MAX_CITIES;i++){
+                printf("%.3s - %.*s",uniquecodearr[i],(int)strlen(citiesarr[i]),citiesarr[i]);
+                }
+            menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
         }
         else if(redirect ==2){
             menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray);
         }
+    }
+
+void calculations(int weight,int type,int distance,int vehicledetails[][4]){
+
+
+    float deliverycost,estdeliveryhrs,fuelconsumption,fuelcost,totalopcost,profitcalc,estdeliveryminutes;
+    int finalcharge;
+    int fuelprice = 310;
+    type = type -1;
+
+    deliverycost = distance * vehicledetails[type][1] *(1+(weight*1.0/10000));
+    estdeliveryhrs = (float)distance / vehicledetails[type][2];
+    estdeliveryminutes = ((estdeliveryhrs - (int)estdeliveryhrs)*60 +0.5);
+    fuelconsumption = (float)distance / vehicledetails[type][3];
+    fuelcost = fuelconsumption * fuelprice;
+    totalopcost = deliverycost + fuelcost;
+    profitcalc = totalopcost * 0.25;
+    finalcharge = totalopcost + profitcalc;
 
 }
+
+
 
 
 
