@@ -245,7 +245,20 @@ int printdistable(char vehicletype[][6],int vehicledetails[][4],char citiesarr[]
 
 }
 
+int  vehiclemanagement(char vehicletype[][6], int vehicledetails[][4]){
+    printf(" %-12s%-15s%-20s%-20s%-20s\n","Type","Capacity(kg)","Rate per km(LKR)","Avg Speed (km/h)","Fuel Efficiency (km/l)");
+    printf("-----------------------------------------------------------------------------------------\n");
+    for(int i = 0; i<3;i++){
+        printf(" %-5s ",vehicletype[i]);
+        for(int j = 0;j<4;j++){
+            printf("%-7c%-10d%-1c",' ',vehicledetails[i][j],' ');
+        }
+        printf("\n");
+    }
+    printf("\n");
+    return 0;
 
+}
 
 
 
