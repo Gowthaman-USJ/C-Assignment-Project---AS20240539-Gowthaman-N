@@ -3,6 +3,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 
@@ -22,13 +23,14 @@ void deliveryorder(char vehicletype[][6],int vehicledetails[][4],char citiesarr[
 void calculations(int weight,int type,int distance,int vehicledetails[][4],int fromindex,int toindex,char citiesarr[][MAX_CITIES],char vehicletype[][6]);
 int printdelivery(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletype[][6],int vehicledetails[][4]);
 void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletype[][6]);
+int readfromreportfile();
 
 int main(){
 
 char vehicletype[][6] = {"Van","Truck","Lorry"};
 int vehicledetails[][4] = {{1000,30,60,12},{5000,40,50,6},{10000,80,45,4}};
 
-int numberarray[MAX_CITIES][MAX_CITIES]; char uniquecodearr[MAX_CITIES][10]; char citiesarr[MAX_CITIES][MAX_CITIES]; int citycount;
+int numberarray[MAX_CITIES][MAX_CITIES]; char uniquecodearr[MAX_CITIES][10]; char citiesarr[MAX_CITIES][MAX_CITIES]; int citycount; float reportsarr[5];
 
 
 menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
@@ -45,6 +47,8 @@ void menu(char vehicletype[][6],int vehicledetails[][4],char citiesarr[][MAX_CIT
     printf("\t\t2.Distance Management\n");
     printf("\t\t3.Display the vehicle type table\n");
     printf("\t\t4.Place a delivery order\n");
+    printf("\t\t5.Reports\n");
+    printf("\t\t6.Exit\n");
     printf("\n\t\tEnter Choice : ");
     scanf("%d",&choice);
     selcchoice(vehicletype,vehicledetails,choice,citiesarr,uniquecodearr,numberarray,citycount);
@@ -63,13 +67,20 @@ int selcchoice(char vehicletype[][6],int vehicledetails[][4],int choice,char cit
 
     case 3:
         vehiclemanagement(vehicletype,vehicledetails);
+        menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
         break;
     case 4:
         deliveryorder(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
         break;
-
-
-}
+    case 5:
+        readfromreportfile();
+        menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
+        break;
+    case 6:
+        printf("Thank You :)\n");
+        exit(0);
+        break;
+    }
 
 
 
@@ -300,6 +311,7 @@ int printdistable(char vehicletype[][6],int vehicledetails[][4],char citiesarr[]
 }
 
 int  vehiclemanagement(char vehicletype[][6], int vehicledetails[][4]){
+    printf("\n");
     printf(" %-12s%-15s%-20s%-20s%-20s\n","Type","Capacity(kg)","Rate per km(LKR)","Avg Speed (km/h)","Fuel Efficiency (km/l)");
     printf("-----------------------------------------------------------------------------------------\n");
     for(int i = 0; i<3;i++){
@@ -320,6 +332,10 @@ void deliveryorder(char vehicletype[][6],int vehicledetails[][4],char citiesarr[
 
 
     vehiclemanagement(vehicletype,vehicledetails);
+    for(int i = 0;i<citycount;i++){
+        printf(" %.3s - %.*s",uniquecodearr[i],(int)strlen(citiesarr[i]),citiesarr[i]);
+        }
+    printf("\n\n");
     printf("Enter Source city unique code(Ex:-Col - Colombo) : ");
      scanf("%s",fromname);
     for(int i =0;i<citycount;i++){
@@ -429,7 +445,7 @@ int printdelivery(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletyp
     printf("\nVehicle: %s\n",vehicletype[type]);
     printf("\nWeight: %d kg\n",(int)calcarray[0]);
     printf("\n--------------------------------------------------------------\n");
-    printf("\nBase Cost: %d × %d × (1+%d/10000) = %d LKR\n ",(int)calcarray[2],vehicledetails[type][1],(int)calcarray[0],(int)calcarray[5]);
+    printf("\nBase Cost: %d × %d × (1+%d/10000) = %.2f LKR\n ",(int)calcarray[2],vehicledetails[type][1],(int)calcarray[0],calcarray[5]);
     printf("\nFuel Used: %.2f  L\n",calcarray[8]);
     printf("\nFuel Cost: %.2f LKR\n",calcarray[9]);
     printf("\nOperational Cost: %.2f LKR\n",calcarray[10]);
@@ -459,6 +475,7 @@ void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletyp
     fprintf(file1,"%10.*s %16.*s %15s %11d",strlen1,citiesarr[(int)calcarray[3]],strlen2,citiesarr[(int)calcarray[4]],vehicletype[(int)calcarray[1]],(int)calcarray[0]);
     fprintf(file1,"%10d %9dhr and %d mins %9.2f",(int)calcarray[5],(int)calcarray[6],(int)calcarray[7],calcarray[8]);
     fprintf(file1,"%18.2f %10d %22d %10d\n",calcarray[9],(int)calcarray[10],(int)calcarray[11],(int)calcarray[12]);
+    fprintf(file1,"\n");
     fclose(file1);
 
     for(int i = 0;i<11;i++){
@@ -468,6 +485,39 @@ void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletyp
 
     }
     row++;
+}
+
+int readfromreportfile(){
+    FILE *file1 = fopen("Store.txt","r");
+
+    int deliveries = 0; char line[200];
+    int distance,time_hrs,time_minute,revenue,profit;
+
+    float totaltimehrs=0;
+    int totaltimemin = 0 ,totalrev=0,totalprofit=0;
+
+    while (fgets(line,sizeof(line),file1)){
+        if (sscanf(line,"%*s %*s %*s %*d %*d %dhr and %d mins %*f %*f %*d %d %d",&time_hrs,&time_minute,&profit,&revenue)==4){
+            totaltimehrs += time_hrs;
+            totaltimemin += time_minute;
+            totalprofit += profit;
+            totalrev += revenue;
+            deliveries+=1;
+        }
+    }
+fclose(file1);
+    if(totaltimemin > 60){
+        totaltimehrs += totaltimemin / 60;
+        totaltimehrs += totaltimemin%60;
+}
+    printf("\n Performance Reports\n");
+    printf(" ------------------------\n ");
+    printf("Total Deliveries Completed : %d\n ",deliveries);
+    printf("Total Distance Covered : %d km\n ",1000);
+    printf("Average Delivery Time : %.2f hrs\n ",totaltimehrs/2);
+    printf("Total Revenue : %d LKR\n ",totalrev);
+    printf("Total Profit : %d LKR\n ",totalprofit);
+    return 0;
 }
 
 
