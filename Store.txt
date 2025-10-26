@@ -1,4 +1,0 @@
-Source City	Destination City   Vehicle Type  Weight  Delivery Cost  Est. Delivery Hours  Fuel Consumption  Fuel Cost  Total Operational Cost  Profit  Final Charge
-						  (Kg)       (LKR)                             (Litre)          (LKR)       (LKR)                  (LKR)     (LKR)
------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Anuradhapura          Colombo           Truck          1000      4400         2hr and 0 mins     16.67           5166.67       9566                   2391      11958
