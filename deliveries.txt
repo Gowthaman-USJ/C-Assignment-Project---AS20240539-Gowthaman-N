@@ -1,0 +1,19 @@
+Source City     Destination City   Vehicle Type  Distance     Weight   Delivery Cost   Est. Delivery Hours  Fuel Consumption   Fuel Cost  Total Cost      Profit   Final Charge
+						  	       (Kg)         (LKR)                              (Litre)           (LKR)        (LKR)        (LKR)       (LKR)
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+
+
+ Hikkaduwa          Kegalle           Truck         173       1000       7612         3hr and 28 mins     28.83           8938.33           16550       4137      20687
+
+    Jaffna        Hikkaduwa           Lorry         491       7000      66776        10hr and 55 mins    122.75          38052.50          104828      26207     131035
+
+Chenkaladi         Kalutara           Truck         550       5000      19800         6hr and 36 mins     55.00          17050.00           36850       9212      46062
+
+Anuradhapura          Colombo           Lorry         198       9000      30096         4hr and 24 mins     49.50          15345.00           45441      11360      56801
+
+Chenkaladi          Colombo           Lorry        1000       1000      88000        22hr and 13 mins    250.00          77500.00          165500      41375     206875
+
+  Dambulla            Galle           Lorry         264       9000      40128         5hr and 52 mins     66.00          20460.00           60588      15147      75735
+
+   Kegalle   Kankasanthurai           Lorry         352       8000      50688         7hr and 49 mins     88.00          27280.00           77968      19492      97460
+
