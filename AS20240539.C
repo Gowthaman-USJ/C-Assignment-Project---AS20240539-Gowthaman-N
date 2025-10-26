@@ -493,14 +493,15 @@ int readfromreportfile(){
     int distance,time_hrs,time_minute,revenue,profit;
 
     float totaltimehrs=0;
-    int totaltimemin = 0 ,totalrev=0,totalprofit=0;
+    int totaltimemin = 0 ,totalrev=0,totalprofit=0,totaldistance=0;
 
     while (fgets(line,sizeof(line),file1)){
-        if (sscanf(line,"%*s %*s %*s %*d %*d %dhr and %d mins %*f %*f %*d %d %d",&time_hrs,&time_minute,&profit,&revenue)==4){
+        if (sscanf(line,"%*s %*s %*s %d %*d %*d %dhr and %d mins %*f %*f %*d %d %d",&distance,&time_hrs,&time_minute,&profit,&revenue)==4){
             totaltimehrs += time_hrs;
             totaltimemin += time_minute;
             totalprofit += profit;
             totalrev += revenue;
+            totaldistance+=distance;
             deliveries+=1;
         }
     }
@@ -512,7 +513,7 @@ fclose(file1);
     printf("\n Performance Reports\n");
     printf(" ------------------------\n ");
     printf("Total Deliveries Completed : %d\n ",deliveries);
-    printf("Total Distance Covered : %d km\n ");
+    printf("Total Distance Covered : %d km\n ",totaldistance);
     printf("Average Delivery Time : %.2f hrs\n ",totaltimehrs/2);
     printf("Total Revenue : %d LKR\n ",totalrev);
     printf("Total Profit : %d LKR\n ",totalprofit);
