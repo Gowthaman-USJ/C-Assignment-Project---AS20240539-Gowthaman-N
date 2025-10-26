@@ -22,7 +22,7 @@ void deliveryorder(char vehicletype[][6],int vehicledetails[][4],char citiesarr[
 void calculations(int weight,int type,int distance,int vehicledetails[][4],int fromindex,int toindex,char citiesarr[][MAX_CITIES],char vehicletype[][6]);
 int printdelivery(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletype[][6],int vehicledetails[][4]);
 void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletype[][6]);
-int readfromreportfile();
+int printperformancereport();
 
 int main(){
 
@@ -72,7 +72,7 @@ int selcchoice(char vehicletype[][6],int vehicledetails[][4],int choice,char cit
         deliveryorder(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
         break;
     case 5:
-        readfromreportfile();
+        printperformancereport();
         menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
         break;
     case 6:
@@ -95,6 +95,7 @@ int readfromfiles(char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numb
            }
     count = i;
     fclose(file1);
+    printf("%d",count);
     i=0;
      while (fgets(uniquecodearr[i], sizeof(uniquecodearr[i]), file2)&& i<MAX_CITIES) {
                 i++;
@@ -139,7 +140,7 @@ int citymanagement(int citycount,char uniquecodearr[][10],char citiesarr[][MAX_C
 
             fclose(file1);
             fclose(file2);
-            printf("Successfully Added %.*s to the list\n",(int)strlen(city)-1,city);
+            printf("Successfully Added %.*s to the list\n\n",(int)strlen(city)-1,city);
 
             inputdistance(citiesarr,numberarray,citycount);
 
@@ -186,11 +187,12 @@ int citymanagement(int citycount,char uniquecodearr[][10],char citiesarr[][MAX_C
         }
 
     else if(choice == 3){
-            char name[MAX_CITIES];
+            char name[MAX_CITIES]; int index;
 
             temp1 = fopen("Temporary.txt","w");
             file1 = fopen("cities.txt","r");
             FILE *file2 = fopen("UniqueCode.txt","w");
+            FILE *file3 = fopen("distance.txt","w");
 
             printf("Enter the city to be removed : ");
             fgets(name,sizeof(name),stdin);
@@ -200,11 +202,24 @@ int citymanagement(int citycount,char uniquecodearr[][10],char citiesarr[][MAX_C
                     fputs(buffer,temp1);
                     fputs(uniquecodearr[i],file2);
                 }
+                else{
+                    index = i;
+                }
                 i++;
             }
+               for(int i=0;i< citycount;i++){
+                    for(int j=0;j< citycount;j++){
+                        if((i != index) &&(j != index)){
+                            fprintf(file3, "%03d ", numberarray[i][j]);
+                        }
+                }
+            fprintf(file3, "\n");
+            }
+
             printf("\nSuccessfully removed city %.*s from the list\n",(int)strlen(name)-1,name);
             fclose(file1);
             fclose(file2);
+            fclose(file3);
             fclose(temp1);
             remove("cities.txt");
             rename("Temporary.txt","cities.txt");
@@ -486,7 +501,7 @@ void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletyp
     row++;
 }
 
-int readfromreportfile(){
+int printperformancereport(){
     FILE *file1 = fopen("Store.txt","r");
 
     int deliveries = 0; char line[200];
