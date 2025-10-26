@@ -469,7 +469,7 @@ void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletyp
     FILE *file1 = fopen("Store.txt","a");
     int strlen1 = strlen(citiesarr[(int)calcarray[3]])-1;
     int strlen2 = strlen(citiesarr[(int)calcarray[4]])-1;
-    //printf("%d\n",(int)calcarray[2]);
+
 
     fprintf(file1,"%10.*s %16.*s %15s %11d",strlen1,citiesarr[(int)calcarray[3]],strlen2,citiesarr[(int)calcarray[4]],vehicletype[(int)calcarray[1]],(int)calcarray[2]);
     fprintf(file1,"%11d %10d %9dhr and %d mins %9.2f",(int)calcarray[0],(int)calcarray[5],(int)calcarray[6],(int)calcarray[7],calcarray[8]);
@@ -496,20 +496,45 @@ int readfromreportfile(){
     int totaltimemin = 0 ,totalrev=0,totalprofit=0,totaldistance=0;
 
     while (fgets(line,sizeof(line),file1)){
-        if (sscanf(line,"%*s %*s %*s %d %*d %*d %dhr and %d mins %*f %*f %*d %d %d",&distance,&time_hrs,&time_minute,&profit,&revenue)==4){
-            totaltimehrs += time_hrs;
-            totaltimemin += time_minute;
-            totalprofit += profit;
-            totalrev += revenue;
-            totaldistance+=distance;
-            deliveries+=1;
-        }
+            if (sscanf(line,"%*s %*s %*s %d %*d %*d %dhr and %d mins %*f %*f %*d %d %d",&distance,&time_hrs,&time_minute,&profit,&revenue)==5){
+                    totaltimehrs += time_hrs;
+                    totaltimemin += time_minute;
+                    totalprofit += profit;
+                    totalrev += revenue;
+                    totaldistance+=distance;
+                    deliveries+=1;
+                }
     }
-fclose(file1);
+    fclose(file1);
     if(totaltimemin > 60){
         totaltimehrs += totaltimemin / 60;
         totaltimehrs += totaltimemin%60;
-}
+
+    }
+
+    int distancearr[deliveries];
+    int i = 0;
+    file1 = fopen("Store.txt","r");
+    while (fgets(line,sizeof(line),file1)){
+                if (sscanf(line,"%*s %*s %*s %d %*d %*d %*dhr and %*d mins %*f %*f %*d %*d %*d",&distancearr[i])==1){
+                    i++;
+                    if(i==deliveries){
+                        break;
+                    }
+            }
+    }
+    fclose(file1);
+    int longroute = 0,shortroute=distancearr[0];
+
+    for(int i =0;i<deliveries;i++){
+        if(longroute<distancearr[i]){
+            longroute = distancearr[i];
+        }
+        if(shortroute>distancearr[i]){
+            shortroute = distancearr[i];
+        }
+    }
+
     printf("\n Performance Reports\n");
     printf(" ------------------------\n ");
     printf("Total Deliveries Completed : %d\n ",deliveries);
@@ -517,6 +542,8 @@ fclose(file1);
     printf("Average Delivery Time : %.2f hrs\n ",totaltimehrs/2);
     printf("Total Revenue : %d LKR\n ",totalrev);
     printf("Total Profit : %d LKR\n ",totalprofit);
+    printf("Longest Route Completed : %d km\n ",longroute);
+    printf("Shortest Route Completed : %d km\n",shortroute);
     return 0;
 }
 
