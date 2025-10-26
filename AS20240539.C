@@ -11,7 +11,7 @@
 
 
 void menu(char vehicletype[][6],int vehicledetails[][4],char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES],int citycount);
-int selcchoice(char vehicletype[][6],int vehicledetails[][4],int choice,char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES],int citycount);
+int selectchoice(char vehicletype[][6],int vehicledetails[][4],int choice,char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES],int citycount);
 int readfromfiles(char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES]);
 int citymanagement(int citycount,char uniquecodearr[][10],char citiesarr[][MAX_CITIES],int numberarray[][MAX_CITIES]);
 int inputdistance(char citiesarr[][MAX_CITIES],int numberarray[][MAX_CITIES],int citycount);
@@ -50,10 +50,10 @@ void menu(char vehicletype[][6],int vehicledetails[][4],char citiesarr[][MAX_CIT
     printf("\t\t6.Exit\n");
     printf("\n\t\tEnter Choice : ");
     scanf("%d",&choice);
-    selcchoice(vehicletype,vehicledetails,choice,citiesarr,uniquecodearr,numberarray,citycount);
+    selectchoice(vehicletype,vehicledetails,choice,citiesarr,uniquecodearr,numberarray,citycount);
 }
 
-int selcchoice(char vehicletype[][6],int vehicledetails[][4],int choice,char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES],int citycount){
+int selectchoice(char vehicletype[][6],int vehicledetails[][4],int choice,char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES],int citycount){
     switch(choice){
     case 1:
         citymanagement(citycount,uniquecodearr,citiesarr,numberarray);
@@ -80,9 +80,6 @@ int selcchoice(char vehicletype[][6],int vehicledetails[][4],int choice,char cit
         exit(0);
         break;
     }
-
-
-
 }
 int readfromfiles(char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES]){
     FILE *file1 = fopen("cities.txt","r");
@@ -108,9 +105,9 @@ int readfromfiles(char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numb
         }
     }
     fclose(file3);
+
     return count;
 
-    //return 0;
 
 }
 int citymanagement(int citycount,char uniquecodearr[][10],char citiesarr[][MAX_CITIES],int numberarray[][MAX_CITIES]){
@@ -256,46 +253,57 @@ int distancemanagement(char vehicletype[][6],int vehicledetails[][4],char cities
     char fromcity[4]; char tocity[4]; char buffer[20];
     int toindex=0,fromindex=0,choice;
 
-    printf("1.Edit distances between two cities\n");
-    printf("2.Display the distance table\n");
-    printf("Enter Choice : ");
+    printf("\n\t1.Edit distance between two cities\n");
+    printf("\t2.Display the distance table\n");
+    printf("\tEnter Choice : ");
     scanf("%d",&choice);
     getchar();
+    printf("\n");
 
     if(choice == 1){
+
+        for(int i = 0;i<citycount;i++){
+        printf(" %.3s - %.*s",uniquecodearr[i],(int)strlen(citiesarr[i]),citiesarr[i]);
+        }
+        printf("\n\n");
+
         FILE *file2 = fopen("distance.txt","w");
-        //FILE *temp1 = fopen("temporary.txt","r");
-        printf("Enter the first 3 letters of From City : ");
+        printf("\nEnter the unique code of From City (eg: Col for Colombo) : ");
         scanf("%s",fromcity);
-        printf("Enter the first 3 letters of To City : ");
+        printf("Enter the unique code of To City : ");
         scanf("%s",tocity);
-        for(int i=0;i<citycount;i++){
+        if(strncmp(fromcity,tocity,3)==0){
+                printf("\nBoth The Cities Cannot Be The Same\n");
+        }
+        else{
+            for(int i=0;i<citycount;i++){
                 if(strncmp(uniquecodearr[i],fromcity,3)==0){
                     fromindex = i;
                     break;
                 }
-        }
-        for(int i=0;i<citycount;i++){
+            }
+            for(int i=0;i<citycount;i++){
                 if(strncmp(uniquecodearr[i],tocity,3)==0){
                     toindex = i;
                     break;
                 }
         }
-    int newdistance ;
-    printf("Enter new distance : ");
-    scanf("%d",&newdistance);
-    numberarray[fromindex][toindex] = newdistance;
-    numberarray[toindex][fromindex] = newdistance;
+            int newdistance ;
+            printf("Enter new distance : ");
+            scanf("%d",&newdistance);
+            numberarray[fromindex][toindex] = newdistance;
+            numberarray[toindex][fromindex] = newdistance;
 
-    for(int i=0;i<citycount;i++){
-            for(int j=0;j<citycount;j++){
-                fprintf(file2, "%03d ", numberarray[i][j]);
-            }
-            fprintf(file2, "\n");
-    }
-    fclose(file2);
-    printf("Distance Changed Successfully\n");
-    menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
+            for(int i=0;i<citycount;i++){
+                for(int j=0;j<citycount;j++){
+                    fprintf(file2, "%03d ", numberarray[i][j]);
+                }
+                fprintf(file2, "\n");
+        }
+            fclose(file2);
+            printf("Distance Changed Successfully\n");
+        }
+            menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
     return 0;
     }
     else if(choice == 2){
