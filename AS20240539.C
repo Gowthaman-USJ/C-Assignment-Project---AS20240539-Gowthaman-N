@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 
 #define MAX_CITIES 30
@@ -445,7 +444,7 @@ int printdelivery(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletyp
     printf("\nVehicle: %s\n",vehicletype[type]);
     printf("\nWeight: %d kg\n",(int)calcarray[0]);
     printf("\n--------------------------------------------------------------\n");
-    printf("\nBase Cost: %d × %d × (1+%d/10000) = %.2f LKR\n ",(int)calcarray[2],vehicledetails[type][1],(int)calcarray[0],calcarray[5]);
+    printf("\nBase Cost: %d * %d * (1+%d/10000) = %.2f LKR\n ",(int)calcarray[2],vehicledetails[type][1],(int)calcarray[0],calcarray[5]);
     printf("\nFuel Used: %.2f  L\n",calcarray[8]);
     printf("\nFuel Cost: %.2f LKR\n",calcarray[9]);
     printf("\nOperational Cost: %.2f LKR\n",calcarray[10]);
@@ -470,11 +469,11 @@ void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletyp
     FILE *file1 = fopen("Store.txt","a");
     int strlen1 = strlen(citiesarr[(int)calcarray[3]])-1;
     int strlen2 = strlen(citiesarr[(int)calcarray[4]])-1;
+    //printf("%d\n",(int)calcarray[2]);
 
-
-    fprintf(file1,"%10.*s %16.*s %15s %11d",strlen1,citiesarr[(int)calcarray[3]],strlen2,citiesarr[(int)calcarray[4]],vehicletype[(int)calcarray[1]],(int)calcarray[0]);
-    fprintf(file1,"%10d %9dhr and %d mins %9.2f",(int)calcarray[5],(int)calcarray[6],(int)calcarray[7],calcarray[8]);
-    fprintf(file1,"%18.2f %10d %22d %10d\n",calcarray[9],(int)calcarray[10],(int)calcarray[11],(int)calcarray[12]);
+    fprintf(file1,"%10.*s %16.*s %15s %11d",strlen1,citiesarr[(int)calcarray[3]],strlen2,citiesarr[(int)calcarray[4]],vehicletype[(int)calcarray[1]],(int)calcarray[2]);
+    fprintf(file1,"%11d %10d %9dhr and %d mins %9.2f",(int)calcarray[0],(int)calcarray[5],(int)calcarray[6],(int)calcarray[7],calcarray[8]);
+    fprintf(file1,"%18.2f %15d %10d %10d\n",calcarray[9],(int)calcarray[10],(int)calcarray[11],(int)calcarray[12]);
     fprintf(file1,"\n");
     fclose(file1);
 
@@ -513,7 +512,7 @@ fclose(file1);
     printf("\n Performance Reports\n");
     printf(" ------------------------\n ");
     printf("Total Deliveries Completed : %d\n ",deliveries);
-    printf("Total Distance Covered : %d km\n ",1000);
+    printf("Total Distance Covered : %d km\n ");
     printf("Average Delivery Time : %.2f hrs\n ",totaltimehrs/2);
     printf("Total Revenue : %d LKR\n ",totalrev);
     printf("Total Profit : %d LKR\n ",totalprofit);
