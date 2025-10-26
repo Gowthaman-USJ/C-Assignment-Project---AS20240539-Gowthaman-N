@@ -86,7 +86,7 @@ int selectchoice(char vehicletype[][6],int vehicledetails[][4],int choice,char c
 }
 int readfromfiles(char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES]){
     FILE *file1 = fopen("cities.txt","r");
-    FILE *file2 = fopen("UniqueCode.txt","r");
+    FILE *file2 = fopen("uniquecode.txt","r");
     FILE *file3 = fopen("distance.txt","r");
     int i = 0; int count;
 
@@ -94,6 +94,7 @@ int readfromfiles(char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numb
                 i++;
            }
     count = i;
+    printf("%d",count);
     fclose(file1);
     i=0;
      while (fgets(uniquecodearr[i], sizeof(uniquecodearr[i]), file2)&& i<MAX_CITIES) {
@@ -126,7 +127,7 @@ int citymanagement(int citycount,char uniquecodearr[][10],char citiesarr[][MAX_C
         if(citycount<MAX_CITIES){
 
             file1 = fopen("cities.txt","a");
-            FILE *file2 = fopen("UniqueCode.txt","a");
+            FILE *file2 = fopen("uniquecode.txt","a");
 
             printf("\nEnter City Name: ");
             fgets(city,sizeof(city),stdin);
@@ -152,7 +153,7 @@ int citymanagement(int citycount,char uniquecodearr[][10],char citiesarr[][MAX_C
 
         temp1 = fopen("Temporary.txt","w");
         file1 = fopen("cities.txt","r");
-        FILE *file2 = fopen("UniqueCode.txt","w");
+        FILE *file2 = fopen("uniquecode.txt","w");
 
         char oldname[MAX_CITIES],newname[MAX_CITIES];
 
@@ -190,7 +191,7 @@ int citymanagement(int citycount,char uniquecodearr[][10],char citiesarr[][MAX_C
 
             temp1 = fopen("Temporary.txt","w");
             file1 = fopen("cities.txt","r");
-            FILE *file2 = fopen("UniqueCode.txt","w");
+            FILE *file2 = fopen("uniquecode.txt","w");
             FILE *file3 = fopen("distance.txt","w");
 
             printf("Enter the city to be removed : ");
@@ -466,10 +467,7 @@ int printdelivery(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletyp
 
 void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletype[][6]){
 
-    float storereportarr[50][11];
-    static int row = 0;
-
-    FILE *file1 = fopen("Store.txt","a");
+    FILE *file1 = fopen("deliveries.txt","a");
     int strlen1 = strlen(citiesarr[(int)calcarray[3]])-1;
     int strlen2 = strlen(citiesarr[(int)calcarray[4]])-1;
 
@@ -479,20 +477,12 @@ void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletyp
     fprintf(file1,"%18.2f %15d %10d %10d\n",calcarray[9],(int)calcarray[10],(int)calcarray[11],(int)calcarray[12]);
     fprintf(file1,"\n");
     fclose(file1);
-
-    for(int i = 0;i<11;i++){
-        if(i!=6){
-            storereportarr[row][i] = calcarray[i];
-        }
-
-    }
-    row++;
 }
 
 int printperformancereport(){
-    FILE *file1 = fopen("Store.txt","r");
+    FILE *file1 = fopen("deliveries.txt","r");
 
-    int deliveries = 0; char line[200];
+    int deliveriesnum = 0; char line[200];
     int distance,time_hrs,time_minute,revenue,profit;
 
     float totaltimehrs=0;
@@ -505,7 +495,7 @@ int printperformancereport(){
                     totalprofit += profit;
                     totalrev += revenue;
                     totaldistance+=distance;
-                    deliveries+=1;
+                    deliveriesnum+=1;
                 }
     }
     fclose(file1);
@@ -515,13 +505,13 @@ int printperformancereport(){
 
     }
 
-    int distancearr[deliveries];
+    int distancearr[deliveriesnum];
     int i = 0;
-    file1 = fopen("Store.txt","r");
+    file1 = fopen("deliveries.txt","r");
     while (fgets(line,sizeof(line),file1)){
                 if (sscanf(line,"%*s %*s %*s %d %*d %*d %*dhr and %*d mins %*f %*f %*d %*d %*d",&distancearr[i])==1){
                     i++;
-                    if(i==deliveries){
+                    if(i==deliveriesnum){
                         break;
                     }
             }
@@ -529,7 +519,7 @@ int printperformancereport(){
     fclose(file1);
     int longroute = 0,shortroute=distancearr[0];
 
-    for(int i =0;i<deliveries;i++){
+    for(int i =0;i<deliveriesnum;i++){
         if(longroute<distancearr[i]){
             longroute = distancearr[i];
         }
@@ -540,7 +530,7 @@ int printperformancereport(){
 
     printf("\n Performance Reports\n");
     printf(" ------------------------\n\n ");
-    printf("Total Deliveries Completed : %d\n\n ",deliveries);
+    printf("Total Deliveries Completed : %d\n\n ",deliveriesnum);
     printf("Total Distance Covered : %d km\n\n ",totaldistance);
     printf("Average Delivery Time : %.2f hrs\n\n ",totaltimehrs/2);
     printf("Total Revenue : %d LKR\n\n ",totalrev);
