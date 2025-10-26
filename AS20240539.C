@@ -20,6 +20,7 @@ int printdistable(char vehicletype[][6],int vehicledetails[][4], char citiesarr[
 int  vehiclemanagement(char vehicletype[][6], int vehicledetails[][4]);
 void deliveryorder(char vehicletype[][6],int vehicledetails[][4],char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES],int citycount);
 void calculations(int weight,int type,int distance,int vehicledetails[][4],int fromindex,int toindex,char citiesarr[][MAX_CITIES],char vehicletype[][6]);
+int printdelivery(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletype[][6],int vehicledetails[][4]);
 void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletype[][6]);
 
 int main(){
@@ -29,7 +30,7 @@ int vehicledetails[][4] = {{1000,30,60,12},{5000,40,50,6},{10000,80,45,4}};
 
 int numberarray[MAX_CITIES][MAX_CITIES]; char uniquecodearr[MAX_CITIES][10]; char citiesarr[MAX_CITIES][MAX_CITIES]; int citycount;
 
-citycount = readfromfiles(citiesarr,uniquecodearr,numberarray);
+
 menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
 
 
@@ -37,6 +38,7 @@ menu(vehicletype,vehicledetails,citiesarr,uniquecodearr,numberarray,citycount);
 }
 void menu(char vehicletype[][6],int vehicledetails[][4],char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numberarray[][MAX_CITIES],int citycount){
     int choice;
+    citycount = readfromfiles(citiesarr,uniquecodearr,numberarray);
 
     printf("\n\t\t\t\t--Menu--\n");
     printf("\t\t1.City Management(Add,edit or rename a city)\n");
@@ -83,7 +85,6 @@ int readfromfiles(char citiesarr[][MAX_CITIES],char uniquecodearr[][10],int numb
            }
     count = i;
     fclose(file1);
-    printf("%d",count);
     i=0;
      while (fgets(uniquecodearr[i], sizeof(uniquecodearr[i]), file2)&& i<MAX_CITIES) {
                 i++;
@@ -112,22 +113,25 @@ int citymanagement(int citycount,char uniquecodearr[][10],char citiesarr[][MAX_C
     scanf("%d",&choice);
     getchar();
     if(choice == 1){
-        if(citycount<30){
+        if(citycount<MAX_CITIES){
+
             file1 = fopen("cities.txt","a");
             FILE *file2 = fopen("UniqueCode.txt","a");
+
             printf("\nEnter City Name: ");
             fgets(city,sizeof(city),stdin);
             fputs(city,file1);
+            strcpy(citiesarr[citycount], city);
             printf("Enter a 3 letter unique code to that city : ");
             fgets(unique,sizeof(unique),stdin);
-            //fprintf(file2,"\n");
+            fprintf(file2,"\n");
             fputs(unique,file2);
+
             fclose(file1);
             fclose(file2);
             printf("Successfully Added %.*s to the list\n",(int)strlen(city)-1,city);
-            readfromfiles(citiesarr,uniquecodearr,numberarray);
+
             inputdistance(citiesarr,numberarray,citycount);
-            readfromfiles(citiesarr,uniquecodearr,numberarray);
 
         }
         else{
@@ -201,15 +205,18 @@ int inputdistance(char citiesarr[][MAX_CITIES],int numberarray[][MAX_CITIES],int
     FILE *file1 = fopen("distance.txt","w");
 
     int inputdistance;
-    for(int i=0;i<(citycount-1);i++){
+
+    for(int i=0;i<(citycount);i++){
         printf("Enter distance from %.*s to %.*s : ",(int)strlen(citiesarr[citycount])-1,citiesarr[citycount],(int)strlen(citiesarr[i])-1,citiesarr[i]);
         scanf("%d",&inputdistance);
         numberarray[citycount][i] = inputdistance;
         numberarray[i][citycount] = inputdistance;
     }
+    numberarray[citycount][citycount] = 0;
 
-    for(int i=0;i<citycount;i++){
-            for(int j=0;j<citycount;j++){
+
+    for(int i=0;i<=citycount;i++){
+            for(int j=0;j<=citycount;j++){
                 fprintf(file1, "%03d ", numberarray[i][j]);
             }
             fprintf(file1, "\n");
@@ -403,7 +410,40 @@ void calculations(int weight,int type,int distance,int vehicledetails[][4],int f
     finalcharge = totalopcost + profitcalc;
 
     float calcarray[]={weight,type,distance,fromindex,toindex,deliverycost,estdeliveryhrs,estdeliveryminutes,fuelconsumption,fuelcost,totalopcost,profitcalc,finalcharge};
+    printdelivery(calcarray,citiesarr,vehicletype,vehicledetails);
     storereports(calcarray,citiesarr,vehicletype);
+}
+
+int printdelivery(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletype[][6],int vehicledetails[][4]){
+
+    int strlen1 = strlen(citiesarr[(int)calcarray[3]])-1;
+    int strlen2 = strlen(citiesarr[(int)calcarray[4]])-1;
+    int type = (int)calcarray[1];
+
+    printf("\n\n==============================================================\n");
+    printf("\nDELIVERY COST ESTIMATION\n");
+    printf("\n--------------------------------------------------------------\n");
+    printf("\nFrom: %.*s\n",strlen1,citiesarr[(int)calcarray[3]]);
+    printf("\nTo: %.*s\n",strlen2,citiesarr[(int)calcarray[4]]);
+    printf("\nMinimum Distance: %d\n",(int)calcarray[2]);
+    printf("\nVehicle: %s\n",vehicletype[type]);
+    printf("\nWeight: %d kg\n",(int)calcarray[0]);
+    printf("\n--------------------------------------------------------------\n");
+    printf("\nBase Cost: %d × %d × (1+%d/10000) = %d LKR\n ",(int)calcarray[2],vehicledetails[type][1],(int)calcarray[0],(int)calcarray[5]);
+    printf("\nFuel Used: %.2f  L\n",calcarray[8]);
+    printf("\nFuel Cost: %.2f LKR\n",calcarray[9]);
+    printf("\nOperational Cost: %.2f LKR\n",calcarray[10]);
+    printf("\nProfit: %.2f LKR\n",calcarray[11]);
+    printf("\nCustomer Charge: %.2f LKR\n",calcarray[12]);
+    if((int)calcarray[7]>=10){
+        printf("\nEstimated Time: %d hours and %d minutes\n",(int)calcarray[6],(int)calcarray[7]);
+    }
+    else{
+        printf("\nEstimated Time: %d hours\n",(int)calcarray[6]);
+    }
+    printf("\n==============================================================\n");
+    return 0;
+
 }
 
 void storereports(float calcarray[],char citiesarr[][MAX_CITIES],char vehicletype[][6]){
